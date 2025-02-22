@@ -166,34 +166,34 @@ export const fileType = {
 //     see: https://stackoverflow.com/a/54572306/4367134
 //     and: https://web.archive.org/web/20230328221404/https://opensource.apple.com/source/cctools/cctools-921/include/mach-o/loader.h.auto.html
 export const flags = {
-    0x1: "noundefs",
-    0x2: "incrlink",
-    0x4: "dyldlink",
-    0x8: "bindatload",
-    0x10: "prebound",
-    0x20: "split_segs",
-    0x40: "lazy_init",
-    0x80: "twolevel",
-    0x100: "force_flat",
-    0x200: "nomultidefs",
-    0x400: "nofixprebinding",
-    0x800: "prebindable",
-    0x1000: "allmodsbound",
-    0x2000: "subsections_via_symbols",
-    0x4000: "canonical",
-    0x8000: "weak_defines",
-    0x10000: "binds_to_weak",
-    0x20000: "allow_stack_execution",
-    0x40000: "root_safe",
-    0x80000: "setuid_safe",
-    0x100000: "reexported_dylibs",
-    0x200000: "pie",
-    0x400000: "dead_strippable_dylib",
-    0x800000: "has_tlv_descriptors",
-    0x1000000: "no_heap_execution",
-    0x2000000: "app_extension_safe", /* The code was linked for use in an application extension. */
-    0x4000000: "nlist_outofsync_with_dyldinfo", /* The external symbols listed in the nlist symbol table do not include all the symbols listed in the dyld info. */
-    0x8000000: "sim_support", /* Allow LC_MIN_VERSION_MACOS and LC_BUILD_VERSION load commands with the platforms macOS, iOSMac, iOSSimulator, tvOSSimulator and watchOSSimulator. */
+    0x1: "noundefs", /* the object file has no undefined references */
+    0x2: "incrlink", /* the object file is the output of an incremental link against a base file and can't be link edited again */
+    0x4: "dyldlink", /* the object file is input for the dynamic linker and can't be staticly link edited again */
+    0x8: "bindatload", /* the object file's undefined references are bound by the dynamic linker when loaded. */
+    0x10: "prebound", /* the file has its dynamic undefined references prebound. */
+    0x20: "split_segs", /* the file has its read-only and read-write segments split */
+    0x40: "lazy_init", /* the shared library init routine is to be run lazily via catching memory faults to its writeable segments (obsolete) */
+    0x80: "twolevel", /* the image is using two-level name space bindings */
+    0x100: "force_flat", /* the executable is forcing all images to use flat name space bindings */
+    0x200: "nomultidefs", /* this umbrella guarantees no multiple defintions of symbols in its sub-images so the two-level namespace hints can always be used. */
+    0x400: "nofixprebinding", /* do not have dyld notify the prebinding agent about this executable */
+    0x800: "prebindable", /* the binary is not prebound but can have its prebinding redone. only used when MH_PREBOUND is not set. */
+    0x1000: "allmodsbound", /* indicates that this binary binds to all two-level namespace modules of its dependent libraries. only used when MH_PREBINDABLE and MH_TWOLEVEL are both set. */ 
+    0x2000: "subsections_via_symbols", /* safe to divide up the sections into sub-sections via symbols for dead code stripping */
+    0x4000: "canonical", /* the binary has been canonicalized via the unprebind operation */
+    0x8000: "weak_defines", /* the final linked image contains external weak symbols */
+    0x10000: "binds_to_weak", /* the final linked image uses weak symbols */
+    0x20000: "allow_stack_execution", /* When this bit is set, all stacks  in the task will be given stack execution privilege.  Only used in MH_EXECUTE filetypes. */
+    0x40000: "root_safe", /* When this bit is set, the binary  declares it is safe for use in processes with uid zero */
+    0x80000: "setuid_safe", /* When this bit is set, the binary  declares it is safe for use in processes when issetugid() is true */
+    0x100000: "reexported_dylibs", /* When this bit is set on a dylib,  the static linker does not need to examine dependent dylibs to see if any are re-exported */
+    0x200000: "pie", /* When this bit is set, the OS will load the main executable at a random address.  Only used in MH_EXECUTE filetypes. */
+    0x400000: "dead_strippable_dylib", /* Only for use on dylibs.  When linking against a dylib that has this bit set, the static linker will automatically not create a LC_LOAD_DYLIB load command to the dylib if no symbols are being referenced from the dylib. */
+    0x800000: "has_tlv_descriptors", /* Contains a section of type  S_THREAD_LOCAL_VARIABLES */
+    0x1000000: "no_heap_execution", /* When this bit is set, the OS will run the main executable with a non-executable heap even on platforms (e.g. i386) that don't require it. Only used in MH_EXECUTE filetypes. */
+    0x2000000: "app_extension_safe",  /* The code was linked for use in an application extension. */
+    0x4000000: "nlist_outofsync_with_dyldinfo",  /* The external symbols listed in the nlist symbol table do not include all the symbols listed in the dyld info. */
+    0x8000000: "sim_support",  /* Allow LC_MIN_VERSION_MACOS and LC_BUILD_VERSION load commands with the platforms macOS, iOSMac, iOSSimulator, tvOSSimulator and watchOSSimulator. */
 }
 export const cmdType = {
     0x80000000: "req_dyld",
