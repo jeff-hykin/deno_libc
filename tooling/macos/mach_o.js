@@ -13,7 +13,7 @@ export class Parser extends Reader {
     constructor(...args) {
         super(...args)
     }
-    
+
     execute(buf) {
         var hdr = this.parseHead(buf)
         if (!hdr) throw new Error("File not in a mach-o format")
