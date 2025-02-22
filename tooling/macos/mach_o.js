@@ -141,26 +141,31 @@ export class Parser extends Reader {
     }
 
     parseCommand(type, buf, file) {
-        if (type === "segment") return this.parseSegmentCmd(type, buf, file)
-        else if (type === "segment_64") return this.parseSegmentCmd(type, buf, file)
-        else if (type === "symtab") return this.parseSymtab(type, buf)
-        else if (type === "symseg") return this.parseSymseg(type, buf)
-        else if (type === "encryption_info") return this.parseEncryptionInfo(type, buf)
-        else if (type === "encryption_info_64") return this.parseEncryptionInfo64(type, buf)
-        else if (type === "rpath") return this.parseRpath(type, buf)
-        else if (type === "dysymtab") return this.parseDysymtab(type, buf)
-        else if (type === "load_dylib" || type === "id_dylib") return this.parseLoadDylib(type, buf)
-        else if (type === "load_weak_dylib") return this.parseLoadDylib(type, buf)
-        else if (type === "load_dylinker" || type === "id_dylinker") return this.parseLoadDylinker(type, buf)
-        else if (type === "version_min_macosx" || type === "version_min_iphoneos") return this.parseVersionMin(type, buf)
-        else if (type === "code_signature" || type === "segment_split_info") return this.parseLinkEdit(type, buf)
-        else if (type === "function_starts") return this.parseFunctionStarts(type, buf, file)
-        else if (type === "data_in_code") return this.parseLinkEdit(type, buf)
-        else if (type === "dylib_code_sign_drs") return this.parseLinkEdit(type, buf)
-        else if (type === "dyld_exports_trie") return this.parseLinkEdit(type, buf)
-        else if (type === "dyld_chained_fixups") return this.parseLinkEdit(type, buf)
-        else if (type === "main") return this.parseMain(type, buf)
-        else return { type: type, data: buf }
+        let output
+        if (type === "segment")                                                    { output = this.parseSegmentCmd(type, buf, file)     }
+        else if (type === "segment_64")                                            { output = this.parseSegmentCmd(type, buf, file)     }
+        else if (type === "symtab")                                                { output = this.parseSymtab(type, buf)               }
+        else if (type === "symseg")                                                { output = this.parseSymseg(type, buf)               }
+        else if (type === "encryption_info")                                       { output = this.parseEncryptionInfo(type, buf)       }
+        else if (type === "encryption_info_64")                                    { output = this.parseEncryptionInfo64(type, buf)     }
+        else if (type === "rpath")                                                 { output = this.parseRpath(type, buf)                }
+        else if (type === "dysymtab")                                              { output = this.parseDysymtab(type, buf)             }
+        else if (type === "load_dylib" || type === "id_dylib")                     { output = this.parseLoadDylib(type, buf)            }
+        else if (type === "load_weak_dylib")                                       { output = this.parseLoadDylib(type, buf)            }
+        else if (type === "load_dylinker" || type === "id_dylinker")               { output = this.parseLoadDylinker(type, buf)         }
+        else if (type === "version_min_macosx" || type === "version_min_iphoneos") { output = this.parseVersionMin(type, buf)           }
+        else if (type === "code_signature" || type === "segment_split_info")       { output = this.parseLinkEdit(type, buf)             }
+        else if (type === "function_starts")                                       { output = this.parseFunctionStarts(type, buf, file) }
+        else if (type === "data_in_code")                                          { output = this.parseLinkEdit(type, buf)             }
+        else if (type === "dylib_code_sign_drs")                                   { output = this.parseLinkEdit(type, buf)             }
+        else if (type === "dyld_exports_trie")                                     { output = this.parseLinkEdit(type, buf)             }
+        else if (type === "dyld_chained_fixups")                                   { output = this.parseLinkEdit(type, buf)             }
+        else if (type === "main")                                                  { output = this.parseMain(type, buf)                 }
+        else                                                                       { output = { type: type, data: buf }                 }
+        if (output.data) {
+            output.data = new Uint8Array(output.data)
+        }
+        return output
     }
 
     parseSegmentCmd(type, buf, file) {
