@@ -161,6 +161,10 @@ export const fileType = {
     10: "dsym",
     11: "kext",
 }
+
+// for flags
+//     see: https://stackoverflow.com/a/54572306/4367134
+//     and: https://web.archive.org/web/20230328221404/https://opensource.apple.com/source/cctools/cctools-921/include/mach-o/loader.h.auto.html
 export const flags = {
     0x1: "noundefs",
     0x2: "incrlink",
@@ -187,6 +191,9 @@ export const flags = {
     0x400000: "dead_strippable_dylib",
     0x800000: "has_tlv_descriptors",
     0x1000000: "no_heap_execution",
+    0x2000000: "app_extension_safe", /* The code was linked for use in an application extension. */
+    0x4000000: "nlist_outofsync_with_dyldinfo", /* The external symbols listed in the nlist symbol table do not include all the symbols listed in the dyld info. */
+    0x8000000: "sim_support", /* Allow LC_MIN_VERSION_MACOS and LC_BUILD_VERSION load commands with the platforms macOS, iOSMac, iOSSimulator, tvOSSimulator and watchOSSimulator. */
 }
 export const cmdType = {
     0x80000000: "req_dyld",
@@ -236,8 +243,13 @@ export const cmdType = {
     0x2b: "dylib_code_sign_drs",
     0x2c: "encryption_info_64",
     0x2d: "linker_option",
-    0x80000033: "dyld_exports_trie",
-    0x80000034: "dyld_chained_fixups",
+    0x80000033: "dyld_exports_trie", // idk exactlty what this refers to in the Apple source code
+    0x80000034: "dyld_chained_fixups", // idk exactlty what this refers to in the Apple source code
+    0x2E: "linker_optimization_hint",  /* optimization hints in MH_OBJECT files */
+    0x2F: "version_min_tvos",  /* build for AppleTV min OS version */
+    0x30: "version_min_watchos",  /* build for Watch min OS version */
+    0x31: "note",  /* arbitrary data included within a Mach-O file */
+    0x32: "build_version",  /* build for platform min OS version */
 }
 export const prot = {
     none: 0,
