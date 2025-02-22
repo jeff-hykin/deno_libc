@@ -26,8 +26,18 @@ export class Parser extends Reader {
 
     mapFlags(value, map) {
         var res = {}
-
-        for (var bit = 1; (value < 0 || bit <= value) && bit !== 0; bit <<= 1) if (value & bit) res[map[bit]] = true
+        
+        for (var bit = 1; (value < 0 || bit <= value) && bit !== 0; bit <<= 1) {
+            if (value & bit) {
+                let key = map[bit]
+                if (key === undefined) {
+                    // console.debug(`unknown flag at bit:`,bit)
+                    res[`unknown_flag_0x${bit.toString(16)}`] = true
+                } else {
+                    res[key] = true
+                }
+            }
+        }
 
         return res
     }
