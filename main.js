@@ -1,6 +1,8 @@
 import { fromCString, MissingSymbolError } from "./ffi.ts"
 import { ENAMETOOLONG, ERANGE, UnixError } from "./error_no.ts"
 
+// TODO: most promising: https://github.com/DjDeveloperr/deno_serial/tree/13674f49da27696b7e8cb3ba2dc603c791a2c837/src/darwin
+
 class NotSupportedError extends Error {}
 
 const O_RDWR = 0x2
@@ -310,13 +312,12 @@ if (Deno.build.os === "windows") {
 //
 if (Deno.build.os === "linux") {
     const getErrString = async function() { {
-        const ret = await libc.__errno_location();
+        var ret = await libc.__errno_location();
         if (ret === null) {
-            return 0;
+            return ""
         }
         const ptrView = new Deno.UnsafePointerView(ret);
-        const errno = ptrView.getInt32();
-        const ret = await libc.strerror(errnum)
+        var ret = await libc.strerror(ptrView.getInt32())
         if (ret === null) {
             return ""
         }
@@ -324,62 +325,24 @@ if (Deno.build.os === "linux") {
         const errorString = ptrView.getCString()
         return errorString
     }
+    
+    // FIXME: 
+    // async function open(path) {
+    //     const buffer = new TextEncoder().encode(path)
+    //     const fd = await clib.open(Deno.UnsafePointer.of(buffer), O_RDWR | O_NOCTTY | O_SYNC)
 
-    async function open(path) {
-        const buffer = new TextEncoder().encode(path)
-        const fd = await clib.open(Deno.UnsafePointer.of(buffer), O_RDWR | O_NOCTTY | O_SYNC)
+    //     if (fd < 0) {
+    //         throw new Error(`Couldn't open '${path}': ${await getErrString()}`)
+    //     }
 
-        if (fd < 0) {
-            throw new Error(`Couldn't open '${path}': ${await getErrString()}`)
-        }
+    //     const tty = new ArrayBuffer(100)
+    //     const ttyPtr = Deno.UnsafePointer.of(tty)
 
-        const tty = new ArrayBuffer(100)
-        const ttyPtr = Deno.UnsafePointer.of(tty)
-
-        if ((await libc.tcgetattr(fd, ttyPtr)) != 0) {
-            throw new Error(`tcgetattr: ${await getErrString()}`)
-        }
-    }
+    //     if ((await libc.tcgetattr(fd, ttyPtr)) != 0) {
+    //         throw new Error(`tcgetattr: ${await getErrString()}`)
+    //     }
+    // }
 }
-
-//     await libc.cfsetspeed(ttyPtr, baudRate);
-
-//     const dataView = new DataView(tty);
-//     const littleEndian = is_platform_little_endian();
-//     dataView.setUint32(0, 0, littleEndian); // c_iflag
-//     dataView.setUint32(4, 0, littleEndian); // c_oflag
-
-//     let cflag = dataView.getUint32(8, littleEndian);
-//     cflag &= ~PARENB; // Clear parity bit, disabling parity (most common)
-//     cflag &= ~CSTOPB; // Clear stop field, only one stop bit used in communication (most common)
-//     cflag &= ~CSIZE; // Clear all bits that set the data size
-//     if (options.dataBits === 7) {
-//       cflag |= CS7;
-//     } else {
-//       cflag |= CS8; // 8 bits per byte (most common)
-//     }
-//     cflag &= ~CRTSCTS; // Disable RTS/CTS hardware flow control (most common)
-//     cflag |= CREAD | CLOCAL; // Turn on READ & ignore ctrl lines (CLOCAL = 1)
-//     dataView.setUint32(8, cflag, littleEndian); // c_cflag
-
-//     dataView.setUint32(12, 0, littleEndian); // c_lflag
-
-//     // Wait for up to 1s (10 deciseconds), returning as soon as any data is received.
-//     dataView.setUint8(17 + VTIME, options.timeoutInDeciseconds ?? 10);
-//     dataView.setUint8(17 + VMIN, options.minimumNumberOfCharsRead ?? 0);
-
-//     if (await libc.tcsetattr(fd, TCSANOW, ttyPtr) != 0) {
-//       SerialPort.internalClose(fd);
-//       throw new Error(`tcsetattr: ${await geterrnoString()}`);
-//     }
-
-//     this.#fd = fd;
-//     this.#readable = new ReadableStream<Uint8Array>(
-//       new SerialSource(this),
-//     );
-//     this.#writable = new WritableStream<Uint8Array>(new SerialSink(this));
-//   }
-
 
 // adapted from https://raw.githubusercontent.com/gnomejs/sdk/a446797352b055f19448743f102a7636d51796b4/unix/src/libc/deno.ts
 
